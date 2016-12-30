@@ -1,6 +1,6 @@
 # THREE.JS CONTEXTMENU
 
-Demo: https://austingray.github.io/threejs-contextmenu/
+Demo: https://austingray.github.io/threex.contextmenu/
 
 It's easy as pie. Just pass your scene, camera, a list of predefined items, and your action definitions.
 
