@@ -27,20 +27,20 @@
         A.Three.scene = new THREE.Scene();
         // camera
         A.Three.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
-        A.Three.camera.position.z = 500;
+        A.Three.camera.position.z = 600;
         // light
         var lights = [];
         lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
         lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
         lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
 
-        lights[ 0 ].position.set( 0, 0, 500 );
-        lights[ 1 ].position.set( 100, 200, 100 );
-        lights[ 2 ].position.set( - 100, - 200, - 100 );
+        lights[ 0 ].position.set( 0, 0, 1000 );
+        // lights[ 1 ].position.set( 100, 200, 100 );
+        // lights[ 2 ].position.set( - 100, - 200, - 100 );
 
         A.Three.scene.add( lights[ 0 ] );
-        A.Three.scene.add( lights[ 1 ] );
-        A.Three.scene.add( lights[ 2 ] );
+        // A.Three.scene.add( lights[ 1 ] );
+        // A.Three.scene.add( lights[ 2 ] );
         // renderer
         A.Three.renderer = new THREE.WebGLRenderer({ antialias: true });
         A.Three.renderer.setClearColor( 0xf0f0f0 );
@@ -87,7 +87,8 @@
       A.ContextMenu.items = [
         { labelText: "Create New Table" },
         { labelText: "Test Item 2" },
-        { labelText: "Dat Menu Doe" }
+        { labelText: "Dat Menu Doe" },
+        { labelText: "Random Item 4" }
       ];
 
       A.ContextMenu.clear = function() {
@@ -100,8 +101,12 @@
       A.ContextMenu.create = function(event) {
         A.ContextMenu.active = true;
         for (var i = 0; i < A.ContextMenu.items.length; i++) {
-          var item = A.ContextMenu.items[i];
-          A.ContextMenu.createSingleMenuItem(item, i, event);
+          (function(i, event) {
+            var item = A.ContextMenu.items[i];
+            setTimeout(function() {
+              A.ContextMenu.createSingleMenuItem(item, i, event);
+            }, i * 100);
+          })(i, event)
         }
       }
 
@@ -142,11 +147,16 @@
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         var geometry = new THREE.BoxGeometry( 256, itemHeight, 100 );
-        var material = new THREE.MeshPhongMaterial({ map: texture, color: 0x607d8b, specular: 0x111111, shininess: 30, shading: THREE.SmoothShading });
+        var material = new THREE.MeshPhongMaterial({ map: texture, color: 0xCDE0FE, specular: 0x111111, shininess: 30, shading: THREE.SmoothShading });
         var cube = new THREE.Mesh( geometry, material );
-        cube.position.set( pos.x, pos.y + offset * itemHeight, 0 );
+        cube.position.set( pos.x, pos.y - offset * itemHeight, -1000 );
         var index = A.ContextMenu.threeObjects.push(cube);
         A.Three.scene.add( A.ContextMenu.threeObjects[index - 1] );
+        setInterval(function() {
+          if ( cube.position.z < 0 ) {
+            cube.position.z = cube.position.z + 100
+          }
+        }, 16);
 
       }
 
@@ -154,19 +164,16 @@
 
       function onDocumentMouseDown( event ) {    
           event.preventDefault();
-          var mouse3D = new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1,   
-                                  -( event.clientY / window.innerHeight ) * 2 + 1,  
-                                  0.5 );     
+          var mouse3D = new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );     
           var raycaster =  new THREE.Raycaster();                                        
           raycaster.setFromCamera( mouse3D, A.Three.camera );
           var intersects = raycaster.intersectObjects( A.ContextMenu.threeObjects );
           console.log(intersects)
           for ( var i = 0; i < A.ContextMenu.threeObjects.length; i++ ) {
-            A.ContextMenu.threeObjects[i].material.color.setHex( 0x607d8b );
+            A.ContextMenu.threeObjects[i].material.color.setHex( 0xCDE0FE );
           }
           if ( intersects.length > 0 ) {
               intersects[ 0 ].object.material.color.setHex( 0xffffff );
-              console.log( intersects[ 0 ].object.id );
           }
       }
 
