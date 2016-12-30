@@ -5,4 +5,6 @@
 
 Right click the iframe below to see it in action, or go here: https://austingray.github.io/threejs-contextmenu/
 
-<iframe src="https://austingray.github.io/threejs-contextmenu/"></iframe>
+
+<iframe width="560" height="315" src="https://austingray.github.io/threejs-contextmenu/" frameborder="1" allowfullscreen></iframe>
+
