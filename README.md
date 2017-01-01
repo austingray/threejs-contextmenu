@@ -35,17 +35,17 @@ Usage:
         console.log('console log action');
       },
       backgroundColor: function() {
-        renderer.setClearColor( Math.random() * 0xffffff | 0x80000000 );
+        TKIT.renderer.setClearColor( Math.random() * 0xffffff | 0x80000000 );
       }
     }
 
     // event listeners
     window.addEventListener( 'contextmenu', function(e) {
       e.preventDefault();
-      THREEx.ContextMenu.contextmenu( event, items, actions );
+      TKIT.ContextMenu.contextmenu( event, items, actions );
     });
     window.addEventListener( 'click', function(e) {
-      THREEx.ContextMenu.destroy();
+      TKIT.ContextMenu.destroy();
     });
 
 Todo:
