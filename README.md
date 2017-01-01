@@ -1,12 +1,11 @@
 # THREE.JS TOOLKIT
 
 A collection of Three.js extensions.
+https://austingray.github.io/threex-toolkit/
 
 Build:
 
     npm install && npm run build
-
-### Core
 
 To use this library, you need to initialize it with your Three.js scene and camera:
 
@@ -62,4 +61,4 @@ Utility for getting objects intersected by the mouse
 
 Usage: 
 
-    var intersects = TKIT.IntersectObject.intersects(event, TKIT.ContextMenu.scene, TKIT.ContextMenu.camera);
+    var intersects = TKIT.IntersectObject.intersects(event, TKIT.scene, TKIT.camera);
