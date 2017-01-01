@@ -1,5 +1,6 @@
 var THREEx = THREEx || {};
 THREEx.ContextMenu = {};
+
 THREEx.ContextMenu.contextmenu = function(event, scene, camera, items, actions) {
 
   // clear any existing menus before displaying again
@@ -38,30 +39,36 @@ THREEx.ContextMenu.create = function() {
 
 THREEx.ContextMenu.createItem = function(item, offset) {
 
+  // get our current click event
   var event = THREEx.ContextMenu.event;
 
-  var action = item.action;
-
-  // text to image
-  var el = document.createElement('canvas');
-  el.id = 'textCanvas'+offset;
-  document.body.appendChild(el);
+  // get our item label and action
   var labelText = item.labelText;
-  var c=document.getElementById('textCanvas'+offset);
+  var action = item.action;
+  var itemHeight = 64;
+  var itemWidth = 256;
+
+  // create canvas
+  var el = document.createElement('canvas');
+  el.id = 'THREExContextMenuCanvas';
+  document.body.appendChild(el);
+  var c = document.getElementById('THREExContextMenuCanvas');
   c.width = 1024;
   c.height = 256;
-  var ctx=c.getContext("2d");
+  // draw menu text
+  var ctx = c.getContext("2d");
   ctx.fillStyle = "white";
-  ctx.fillRect(0,0,1024,256);
+  ctx.fillRect(0, 0, c.width, c.height);
   ctx.font="112px Arial";
   ctx.fillStyle = 'black';
-  ctx.fillText(labelText,32,164);
+  ctx.fillText(labelText, 32, 164);
+  // create image from canvas
   var d = c.toDataURL("image/png");
-  image = new Image(256, 128);
+  var image = new Image();
   image.src = d;
   document.body.appendChild(image);
 
-  // mouse position
+  // get click event position in scene
   var vector = new THREE.Vector3();
   vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
   vector.unproject( THREEx.ContextMenu.camera );
@@ -69,12 +76,9 @@ THREEx.ContextMenu.createItem = function(item, offset) {
   var distance = - THREEx.ContextMenu.camera.position.z / dir.z;
   var pos = THREEx.ContextMenu.camera.position.clone().add( dir.multiplyScalar( distance ) );
 
-  // three
-  var itemHeight = 64;
+  // create and add our menu items
   var texture = new THREE.Texture( image );
   texture.needsUpdate = true;
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
   var geometry = new THREE.BoxGeometry( 256, itemHeight, 100 );
   var material = new THREE.MeshPhongMaterial({ map: texture, color: 0xCDE0FE, specular: 0x111111, shininess: 30, shading: THREE.SmoothShading });
   var cube = new THREE.Mesh( geometry, material );
@@ -117,7 +121,6 @@ THREEx.ContextMenu.Events.mousemove = function(event) {
     intersects[ 0 ].object.material.color.setHex( 0xffffff );
   }
 }
-
 THREEx.ContextMenu.Events.click = function(event) {
   var intersects = THREEx.IntersectObject.intersects(event, THREEx.ContextMenu.scene, THREEx.ContextMenu.camera);
   if ( intersects.length > 0 ) {
@@ -126,29 +129,30 @@ THREEx.ContextMenu.Events.click = function(event) {
   THREEx.ContextMenu.destroy();
 }
 
-
-
-/*
- * IntersectObject extension
- * adapted from: https://threejs.org/docs/api/core/Raycaster.html
- * source: https://github.com/austingray/threex.intersectobject
- */
-THREEx.IntersectObject = {};
-THREEx.IntersectObject.raycaster = new THREE.Raycaster();
-THREEx.IntersectObject.mouse = new THREE.Vector2();
-THREEx.IntersectObject.intersects = function(event, scene, camera) {
+if ( typeof THREEx.IntersectObject === 'undefined' ) {
   
-  // calculate mouse position in normalized device coordinates
-	// (-1 to +1) for both components
-  THREEx.IntersectObject.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	THREEx.IntersectObject.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-  
-  // update the picking ray with the camera and mouse position
-	THREEx.IntersectObject.raycaster.setFromCamera( THREEx.IntersectObject.mouse, camera );
+  /*
+   * IntersectObject extension
+   * adapted from: https://threejs.org/docs/api/core/Raycaster.html
+   * source: https://github.com/austingray/threex.intersectobject
+   */
 
-	// calculate objects intersecting the picking ray
-	var intersects = THREEx.IntersectObject.raycaster.intersectObjects( scene.children );
+  THREEx.IntersectObject = {};
+  THREEx.IntersectObject.raycaster = new THREE.Raycaster();
+  THREEx.IntersectObject.mouse = new THREE.Vector2();
 
-  return intersects;
+  THREEx.IntersectObject.intersects = function(event, scene, camera) {
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
+    THREEx.IntersectObject.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    THREEx.IntersectObject.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    
+    // update the picking ray with the camera and mouse position
+    THREEx.IntersectObject.raycaster.setFromCamera( THREEx.IntersectObject.mouse, camera );
 
+    // calculate objects intersecting the picking ray
+    var intersects = THREEx.IntersectObject.raycaster.intersectObjects( scene.children );
+
+    return intersects;
+  }
 }
