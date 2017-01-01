@@ -53,7 +53,16 @@
         { labelText: "Do Alert", action: "actionAlert" },
         { labelText: "Label 2", action: "action2" }
       ];
-      THREEx.ContextMenu.init(scene, camera, items, actions);
+      // THREEx.ContextMenu.init(scene, camera, items, actions);
+      window.addEventListener( 'contextmenu', function(e) {
+        e.preventDefault();
+        THREEx.ContextMenu.contextmenu( scene, camera, items, actions );
+      });
+      window.addEventListener( 'click', function(e) {
+        if ( THREEx.ContextMenu.active ) {
+          THREEx.ContextMenu.clear();
+        }
+      });
 
 
     </script>

@@ -1,29 +1,19 @@
 var THREEx = THREEx || {};
 THREEx.ContextMenu = {};
-THREEx.ContextMenu.init = function(scene, camera, items, actions) {
-  THREEx.ContextMenu.active = false;
+THREEx.ContextMenu.contextmenu = function(scene, camera, items, actions) {
+  if ( THREEx.ContextMenu.active ) {
+    THREEx.ContextMenu.clear();
+  }
   THREEx.ContextMenu.items = items;
   THREEx.ContextMenu.actions = actions;
-  // create scene reference
   THREEx.ContextMenu.Three.init(scene, camera);
-  // override default contextmenu
-  document.addEventListener( "contextmenu", function(event) {
-    event.preventDefault();
-    if ( THREEx.ContextMenu.active ) {
-      THREEx.ContextMenu.clear();
-    }
-    document.addEventListener('mousemove', function(e) {
-      THREEx.ContextMenu.Events.mousemove(e); 
-    } );
-    THREEx.ContextMenu.active = true;
-    THREEx.ContextMenu.event = event;
-    THREEx.ContextMenu.create(event);
-  });
-  // clear contextmenu on left click
-  document.addEventListener( "click", function(event) {
-    THREEx.ContextMenu.Events.click(event);
-  });
-};
+  document.addEventListener('mousemove', function(e) {
+    THREEx.ContextMenu.Events.mousemove(e);
+  } );
+  THREEx.ContextMenu.active = true;
+  THREEx.ContextMenu.event = event;
+  THREEx.ContextMenu.create(event);
+}
 
 THREEx.ContextMenu.Three = {};
 THREEx.ContextMenu.Three.init = function(scene, camera) {
@@ -31,13 +21,6 @@ THREEx.ContextMenu.Three.init = function(scene, camera) {
   THREEx.ContextMenu.Three.scene = scene;
   THREEx.ContextMenu.Three.camera = camera;
 };
-THREEx.ContextMenu.Three.getIntersectedObject = function(event) {
-  var mouse3D = new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );     
-  var raycaster =  new THREE.Raycaster();                                        
-  raycaster.setFromCamera( mouse3D, THREEx.ContextMenu.Three.camera );
-  var intersects = raycaster.intersectObjects( THREEx.ContextMenu.Three.objects );
-  return intersects;
-}
 
 THREEx.ContextMenu.create = function() {
   for (var i = 0; i < THREEx.ContextMenu.items.length; i++) {
@@ -105,16 +88,19 @@ THREEx.ContextMenu.createSingleItem = function(item, offset) {
 }
 
 THREEx.ContextMenu.clear = function() {
-  document.removeEventListener('mousemove', THREEx.ContextMenu.Events.MouseMove)
-  for (var i = 0; i < THREEx.ContextMenu.Three.objects.length; i++) {
-    THREEx.ContextMenu.Three.scene.remove( THREEx.ContextMenu.Three.objects[i] );
+  if ( THREEx.ContextMenu.active ) {
+    THREEx.ContextMenu.active = false;
+    document.removeEventListener('mousemove', THREEx.ContextMenu.Events.MouseMove)
+    for (var i = 0; i < THREEx.ContextMenu.Three.objects.length; i++) {
+      THREEx.ContextMenu.Three.scene.remove( THREEx.ContextMenu.Three.objects[i] );
+    }
+    THREEx.ContextMenu.Three.objects = [];
   }
-  THREEx.ContextMenu.Three.objects = [];
 }
 
 THREEx.ContextMenu.Events = {};
 THREEx.ContextMenu.Events.mousemove = function(event) {
-  var intersects = THREEx.ContextMenu.Three.getIntersectedObject(event);
+  var intersects = THREEx.IntersectObject.intersects(event, THREEx.ContextMenu.Three.scene, THREEx.ContextMenu.Three.camera);
   for ( var i = 0; i < THREEx.ContextMenu.Three.objects.length; i++ ) {
     THREEx.ContextMenu.Three.objects[i].material.color.setHex( 0xCDE0FE );
   }
@@ -124,10 +110,37 @@ THREEx.ContextMenu.Events.mousemove = function(event) {
 }
 
 THREEx.ContextMenu.Events.click = function(event) {
-  var intersects = THREEx.ContextMenu.Three.getIntersectedObject(event);
+  var intersects = THREEx.IntersectObject.intersects(event, THREEx.ContextMenu.Three.scene, THREEx.ContextMenu.Three.camera);
   if ( intersects.length > 0 ) {
     THREEx.ContextMenu.actions[intersects[ 0 ].object.contextmenuaction]();
   }
   THREEx.ContextMenu.active = false;
   THREEx.ContextMenu.clear();
+}
+
+
+
+/*
+ * IntersectObject extension
+ * adapted from: https://threejs.org/docs/api/core/Raycaster.html
+ * source: https://github.com/austingray/threex.intersectobject
+ */
+THREEx.IntersectObject = {};
+THREEx.IntersectObject.raycaster = new THREE.Raycaster();
+THREEx.IntersectObject.mouse = new THREE.Vector2();
+THREEx.IntersectObject.intersects = function(event, scene, camera) {
+  
+  // calculate mouse position in normalized device coordinates
+	// (-1 to +1) for both components
+  THREEx.IntersectObject.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	THREEx.IntersectObject.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  
+  // update the picking ray with the camera and mouse position
+	THREEx.IntersectObject.raycaster.setFromCamera( THREEx.IntersectObject.mouse, camera );
+
+	// calculate objects intersecting the picking ray
+	var intersects = THREEx.IntersectObject.raycaster.intersectObjects( scene.children );
+
+  return intersects;
+
 }
