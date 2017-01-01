@@ -1,0 +1,29 @@
+{
+  "name": "threex-toolkit",
+  "version": "1.0.0",
+  "description": "A collection of Three.js extensions.",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "build": "build/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/austingray/threex-toolkit.git"
+  },
+  "keywords": [
+    "Three.js"
+  ],
+  "author": "Austin Gray",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/austingray/threex-toolkit/issues"
+  },
+  "homepage": "https://github.com/austingray/threex-toolkit#readme",
+  "dependencies": {
+    "concat-with-sourcemaps": "^1.0.4",
+    "uglify-js": "^2.7.5"
+  }
+}

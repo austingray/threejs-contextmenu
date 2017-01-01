@@ -1,8 +1,22 @@
-# THREE.JS CONTEXTMENU
+# THREE.JS TOOLKIT
 
-Demo: https://austingray.github.io/threex.contextmenu/
+A collection of Three.js extensions.
 
-Pass your click event, scene, camera, a list of predefined items, and your action definitions.
+Build:
+
+    npm install && npm run build
+
+### Core
+
+To use this library, you need to initialize it with your Three.js scene and camera:
+
+    TKIT.init( scene, camera );
+
+Alternatively, for rapid prototyping you can use the basic scene generator:
+
+    TKIT.generateBasicScene();
+
+### ContextMenu
 
 Usage: 
 
@@ -29,7 +43,7 @@ Usage:
     // event listeners
     window.addEventListener( 'contextmenu', function(e) {
       e.preventDefault();
-      THREEx.ContextMenu.contextmenu( event, scene, camera, items, actions );
+      THREEx.ContextMenu.contextmenu( event, items, actions );
     });
     window.addEventListener( 'click', function(e) {
       THREEx.ContextMenu.destroy();
@@ -41,3 +55,11 @@ Todo:
  - Resize contextmenu based on Text size
  - Add custom appearance options for font/color
  - Add fade in/out effect options
+
+### IntersectObject
+
+Utility for getting objects intersected by the mouse
+
+Usage: 
+
+    var intersects = TKIT.IntersectObject.intersects(event, TKIT.ContextMenu.scene, TKIT.ContextMenu.camera);

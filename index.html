@@ -8,35 +8,10 @@
   <body>
 
     <script src="./lib/three.min.js"></script>
-    <script src="./src/threex.contextmenu.js"></script>
+    <script src="./dist/threex.toolkit.js"></script>
     <script>
 
-      /*
-       *  Basic Three.js Scene
-       */
-      var scene = new THREE.Scene();
-      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
-      camera.position.z = 600;
-      var light = new THREE.PointLight( 0xffffff, 1, 0 );
-      light.position.set( 0, 0, 1000 );
-      scene.add(light);
-      var renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setClearColor( 0xf0f0f0 );
-      renderer.setSize( window.innerWidth, window.innerHeight );
-      document.body.appendChild( renderer.domElement );
-
-      var render = function() {
-        requestAnimationFrame( render );
-        renderer.render( scene, camera );
-      }
-      
-      render();
-
-      window.addEventListener( 'resize', function() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize( window.innerWidth, window.innerHeight );
-      });
+      TKIT.generateBasicScene();
 
       /*
        * Context Menu Example
@@ -60,10 +35,10 @@
 
       window.addEventListener( 'contextmenu', function(e) {
         e.preventDefault();
-        THREEx.ContextMenu.contextmenu( event, scene, camera, items, actions );
+        TKIT.ContextMenu.contextmenu( event, items, actions );
       });
       window.addEventListener( 'click', function(e) {
-        THREEx.ContextMenu.destroy();
+        TKIT.ContextMenu.destroy();
       });
 
 
