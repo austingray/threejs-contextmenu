@@ -1,39 +1,42 @@
 var THREEx = THREEx || {};
 THREEx.ContextMenu = {};
-THREEx.ContextMenu.contextmenu = function(scene, camera, items, actions) {
+THREEx.ContextMenu.contextmenu = function(event, scene, camera, items, actions) {
+
+  // clear any existing menus before displaying again
   if ( THREEx.ContextMenu.active ) {
-    THREEx.ContextMenu.clear();
+    THREEx.ContextMenu.destroy();
   }
+
+  THREEx.ContextMenu.active = true;
+
+  // make variables available
+  THREEx.ContextMenu.event = event;
   THREEx.ContextMenu.items = items;
   THREEx.ContextMenu.actions = actions;
-  THREEx.ContextMenu.Three.init(scene, camera);
-  document.addEventListener('mousemove', function(e) {
-    THREEx.ContextMenu.Events.mousemove(e);
-  } );
-  THREEx.ContextMenu.active = true;
-  THREEx.ContextMenu.event = event;
-  THREEx.ContextMenu.create(event);
-}
+  THREEx.ContextMenu.scene = scene;
+  THREEx.ContextMenu.camera = camera;
+  // array that holds our three.js meshes
+  THREEx.ContextMenu.objects = [];
 
-THREEx.ContextMenu.Three = {};
-THREEx.ContextMenu.Three.init = function(scene, camera) {
-  THREEx.ContextMenu.Three.objects = [];
-  THREEx.ContextMenu.Three.scene = scene;
-  THREEx.ContextMenu.Three.camera = camera;
-};
+  document.addEventListener( 'mousemove', THREEx.ContextMenu.Events.mousemove, false );
+  document.addEventListener( 'click', THREEx.ContextMenu.Events.click, false );
+
+  THREEx.ContextMenu.create();
+
+}
 
 THREEx.ContextMenu.create = function() {
   for (var i = 0; i < THREEx.ContextMenu.items.length; i++) {
     (function(i) {
       var item = THREEx.ContextMenu.items[i];
       setTimeout(function() {
-        THREEx.ContextMenu.createSingleItem(item, i);
+        THREEx.ContextMenu.createItem(item, i);
       }, i * 100);
     })(i);
   }
 };
 
-THREEx.ContextMenu.createSingleItem = function(item, offset) {
+THREEx.ContextMenu.createItem = function(item, offset) {
 
   var event = THREEx.ContextMenu.event;
 
@@ -61,10 +64,10 @@ THREEx.ContextMenu.createSingleItem = function(item, offset) {
   // mouse position
   var vector = new THREE.Vector3();
   vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
-  vector.unproject( THREEx.ContextMenu.Three.camera );
-  var dir = vector.sub( THREEx.ContextMenu.Three.camera.position ).normalize();
-  var distance = - THREEx.ContextMenu.Three.camera.position.z / dir.z;
-  var pos = THREEx.ContextMenu.Three.camera.position.clone().add( dir.multiplyScalar( distance ) );
+  vector.unproject( THREEx.ContextMenu.camera );
+  var dir = vector.sub( THREEx.ContextMenu.camera.position ).normalize();
+  var distance = - THREEx.ContextMenu.camera.position.z / dir.z;
+  var pos = THREEx.ContextMenu.camera.position.clone().add( dir.multiplyScalar( distance ) );
 
   // three
   var itemHeight = 64;
@@ -77,32 +80,38 @@ THREEx.ContextMenu.createSingleItem = function(item, offset) {
   var cube = new THREE.Mesh( geometry, material );
   cube.position.set( pos.x, pos.y - offset * itemHeight, -1000 );
   cube.contextmenuaction = action;
-  var index = THREEx.ContextMenu.Three.objects.push(cube);
-  THREEx.ContextMenu.Three.scene.add( THREEx.ContextMenu.Three.objects[index - 1] );
+  var index = THREEx.ContextMenu.objects.push(cube);
+  THREEx.ContextMenu.scene.add( THREEx.ContextMenu.objects[index - 1] );
   setInterval(function() {
     if ( cube.position.z < 0 ) {
       cube.position.z = cube.position.z + 100
     }
   }, 16);
 
-}
+};
 
-THREEx.ContextMenu.clear = function() {
+THREEx.ContextMenu.destroy = function() {
+  // only needs to run if active
   if ( THREEx.ContextMenu.active ) {
+    // set to inactive
     THREEx.ContextMenu.active = false;
-    document.removeEventListener('mousemove', THREEx.ContextMenu.Events.MouseMove)
-    for (var i = 0; i < THREEx.ContextMenu.Three.objects.length; i++) {
-      THREEx.ContextMenu.Three.scene.remove( THREEx.ContextMenu.Three.objects[i] );
+    // remove event handlers
+    document.removeEventListener('mousemove', THREEx.ContextMenu.Events.mousemove );
+    document.removeEventListener( 'click', THREEx.ContextMenu.Events.click );
+    // clear three.js meshes from the scene
+    for (var i = 0; i < THREEx.ContextMenu.objects.length; i++) {
+      THREEx.ContextMenu.scene.remove( THREEx.ContextMenu.objects[i] );
     }
-    THREEx.ContextMenu.Three.objects = [];
+    // empty our reference array
+    THREEx.ContextMenu.objects = [];
   }
 }
 
 THREEx.ContextMenu.Events = {};
 THREEx.ContextMenu.Events.mousemove = function(event) {
-  var intersects = THREEx.IntersectObject.intersects(event, THREEx.ContextMenu.Three.scene, THREEx.ContextMenu.Three.camera);
-  for ( var i = 0; i < THREEx.ContextMenu.Three.objects.length; i++ ) {
-    THREEx.ContextMenu.Three.objects[i].material.color.setHex( 0xCDE0FE );
+  var intersects = THREEx.IntersectObject.intersects(event, THREEx.ContextMenu.scene, THREEx.ContextMenu.camera);
+  for ( var i = 0; i < THREEx.ContextMenu.objects.length; i++ ) {
+    THREEx.ContextMenu.objects[i].material.color.setHex( 0xCDE0FE );
   }
   if ( intersects.length > 0 ) {
     intersects[ 0 ].object.material.color.setHex( 0xffffff );
@@ -110,12 +119,11 @@ THREEx.ContextMenu.Events.mousemove = function(event) {
 }
 
 THREEx.ContextMenu.Events.click = function(event) {
-  var intersects = THREEx.IntersectObject.intersects(event, THREEx.ContextMenu.Three.scene, THREEx.ContextMenu.Three.camera);
+  var intersects = THREEx.IntersectObject.intersects(event, THREEx.ContextMenu.scene, THREEx.ContextMenu.camera);
   if ( intersects.length > 0 ) {
     THREEx.ContextMenu.actions[intersects[ 0 ].object.contextmenuaction]();
   }
-  THREEx.ContextMenu.active = false;
-  THREEx.ContextMenu.clear();
+  THREEx.ContextMenu.destroy();
 }
 
 

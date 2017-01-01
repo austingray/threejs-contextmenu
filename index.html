@@ -43,25 +43,27 @@
        */
       var actions = {
         actionAlert: function() {
-          alert("this context menu creates an alert.");
+          alert('this context menu creates an alert.');
         },
         action2: function() {
-          console.log('trigger another action');
+          console.log('console log action');
+        },
+        backgroundColor: function() {
+          renderer.setClearColor( Math.random() * 0xffffff | 0x80000000 );
         }
       }
       var items = [
         { labelText: "Do Alert", action: "actionAlert" },
-        { labelText: "Label 2", action: "action2" }
+        { labelText: "Console Log", action: "action2" },
+        { labelText: "Random BG Color", action: "backgroundColor" }
       ];
-      // THREEx.ContextMenu.init(scene, camera, items, actions);
+
       window.addEventListener( 'contextmenu', function(e) {
         e.preventDefault();
-        THREEx.ContextMenu.contextmenu( scene, camera, items, actions );
+        THREEx.ContextMenu.contextmenu( event, scene, camera, items, actions );
       });
       window.addEventListener( 'click', function(e) {
-        if ( THREEx.ContextMenu.active ) {
-          THREEx.ContextMenu.clear();
-        }
+        THREEx.ContextMenu.destroy();
       });
 
 
