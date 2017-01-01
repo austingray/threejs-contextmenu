@@ -20,24 +20,30 @@
        */
       var actions = {
         actionAlert: function() {
-          alert('this context menu creates an alert.');
+          alert('This menu pops up when the page loads. Right click to activate it again.');
         },
         action2: function() {
           console.log('console log action');
         },
         backgroundColor: function() {
           TKIT.renderer.setClearColor( Math.random() * 0xffffff | 0x80000000 );
+        },
+        deleteItem: function() {
+          items.pop();
         }
       }
       var items = [
-        { labelText: "Do Alert", action: "actionAlert" },
+        { labelText: "How To Use?", action: "actionAlert" },
         { labelText: "Console Log", action: "action2" },
-        { labelText: "Random BG Color", action: "backgroundColor" }
+        { labelText: "Random BG Color", action: "backgroundColor" },
+        { labelText: "Delete This Item", action: "deleteItem" }
       ];
+
+      TKIT.ContextMenu.create( items, actions, window.innerWidth / 2, 150 );
 
       window.addEventListener( 'contextmenu', function(e) {
         e.preventDefault();
-        TKIT.ContextMenu.contextmenu( event, items, actions );
+        TKIT.ContextMenu.create( items, actions, e.clientX, e.clientY );
       });
       window.addEventListener( 'click', function(e) {
         TKIT.ContextMenu.destroy();

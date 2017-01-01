@@ -42,7 +42,7 @@ Usage:
     // event listeners
     window.addEventListener( 'contextmenu', function(e) {
       e.preventDefault();
-      TKIT.ContextMenu.contextmenu( event, items, actions );
+      TKIT.ContextMenu.create( items, actions, e.clientX, e.clientY );
     });
     window.addEventListener( 'click', function(e) {
       TKIT.ContextMenu.destroy();

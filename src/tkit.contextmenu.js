@@ -1,7 +1,7 @@
 var TKIT = TKIT || {};
 TKIT.ContextMenu = {};
 
-TKIT.ContextMenu.contextmenu = function(event, items, actions) {
+TKIT.ContextMenu.create = function(items, actions, centerX, centerY) {
 
   // clear any existing menus before displaying again
   if ( TKIT.ContextMenu.active ) {
@@ -11,7 +11,8 @@ TKIT.ContextMenu.contextmenu = function(event, items, actions) {
   TKIT.ContextMenu.active = true;
 
   // make variables available
-  TKIT.ContextMenu.event = event;
+  TKIT.ContextMenu.centerX = centerX || 0;
+  TKIT.ContextMenu.centerY = centerY || 0;
   TKIT.ContextMenu.items = items;
   TKIT.ContextMenu.actions = actions;
   // array that holds our three.js meshes
@@ -20,11 +21,11 @@ TKIT.ContextMenu.contextmenu = function(event, items, actions) {
   document.addEventListener( 'mousemove', TKIT.ContextMenu.Events.mousemove, false );
   document.addEventListener( 'click', TKIT.ContextMenu.Events.click, false );
 
-  TKIT.ContextMenu.create();
+  TKIT.ContextMenu.createMenu();
 
 }
 
-TKIT.ContextMenu.create = function() {
+TKIT.ContextMenu.createMenu = function() {
   for (var i = 0; i < TKIT.ContextMenu.items.length; i++) {
     (function(i) {
       var item = TKIT.ContextMenu.items[i];
@@ -68,7 +69,7 @@ TKIT.ContextMenu.createItem = function(item, offset) {
 
   // get click event position in scene
   var vector = new THREE.Vector3();
-  vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+  vector.set( ( TKIT.ContextMenu.centerX / window.innerWidth ) * 2 - 1, - ( TKIT.ContextMenu.centerY / window.innerHeight ) * 2 + 1, 0.5 );
   vector.unproject( TKIT.camera );
   var dir = vector.sub( TKIT.camera.position ).normalize();
   var distance = - TKIT.camera.position.z / dir.z;
