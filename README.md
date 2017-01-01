@@ -1,4 +1,4 @@
-# THREE.JS TOOLKIT
+# THREEX TOOLKIT
 
 A collection of Three.js extensions.
 https://austingray.github.io/threex-toolkit/
