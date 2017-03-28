@@ -128,67 +128,18 @@ TKIT.ContextMenu.Events.click = function(event) {
   }
   TKIT.ContextMenu.destroy();
 }
+
 var TKIT = TKIT || {};
 TKIT.init = function(scene, camera) {
   TKIT.scene = scene;
   TKIT.camera = camera;
-}
-
-TKIT.generateBasicScene = function() {
-
-  TKIT.scene = new THREE.Scene();
-  TKIT.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
-  TKIT.camera.position.z = 600;
-  TKIT.light = new THREE.PointLight( 0xffffff, 1, 0 );
-  TKIT.light.position.set( 0, 0, 1000 );
-  TKIT.scene.add( TKIT.light );
-  TKIT.renderer = new THREE.WebGLRenderer({ antialias: true });
-  TKIT.renderer.setClearColor( 0xf0f0f0 );
-  TKIT.renderer.setSize( window.innerWidth, window.innerHeight );
-  document.body.appendChild( TKIT.renderer.domElement );
-  TKIT.render = function() {
-    requestAnimationFrame( TKIT.render );
-    TKIT.renderer.render( TKIT.scene, TKIT.camera );
-  }
-  
-  TKIT.render();
-
-  window.addEventListener( 'resize', function() {
-    TKIT.camera.aspect = window.innerWidth / window.innerHeight;
-    TKIT.camera.updateProjectionMatrix();
-    TKIT.renderer.setSize( window.innerWidth, window.innerHeight );
-  });
-    
-}
-var TKIT = TKIT || {};
-TKIT.InputElements = {};
-
-TKIT.InputElements.create = function( args, scene ) {
-
-  var type = args.type || 'text';
-  var fontFamily = args.fontFamily || 'Arial';
-  var fontColor = args.fontColor || 'black';
-  var fontSize = args.fontSize || '18px';
-  var width = args.width || 256;
-  var height = args.height || 128;
-  var backgroundColor = args.backgroundColor || 'white';
-  var cursorColor = args.cursorColor || 'black';
-  var containerBackgroundColor = args.containerBackgroundColor || 'green';
-
-  if ( type === 'text' ) {
-
-   
-
-  }
-
 };
-
 
 /*
  * IntersectObject extension
  * adapted from: https://threejs.org/docs/api/core/Raycaster.html
  */
-TKIT = TKIT || {};
+var TKIT = TKIT || {};
 TKIT.IntersectObject = {};
 TKIT.IntersectObject.raycaster = new THREE.Raycaster();
 TKIT.IntersectObject.mouse = new THREE.Vector2();
@@ -206,4 +157,41 @@ TKIT.IntersectObject.intersects = function(event, scene, camera) {
   var intersects = TKIT.IntersectObject.raycaster.intersectObjects( scene.children );
 
   return intersects;
+}
+
+var TKIT = TKIT || {};
+TKIT.scenes = {};
+
+TKIT.scenes.generate = function(type) {
+  const scene = TKIT.scenes.types[type];
+
+  if (typeof scene === 'function') {
+    return scene();
+  }
+};
+
+TKIT.scenes.types = {};
+TKIT.scenes.types.basic = function() {
+  TKIT.scene = new THREE.Scene();
+  TKIT.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
+  TKIT.camera.position.z = 600;
+  TKIT.light = new THREE.PointLight( 0xffffff, 1, 0 );
+  TKIT.light.position.set( 0, 0, 1000 );
+  TKIT.scene.add( TKIT.light );
+  TKIT.renderer = new THREE.WebGLRenderer({ antialias: true });
+  TKIT.renderer.setClearColor( 0xf0f0f0 );
+  TKIT.renderer.setSize( window.innerWidth, window.innerHeight );
+  document.body.appendChild( TKIT.renderer.domElement );
+  TKIT.render = function() {
+    requestAnimationFrame( TKIT.render );
+    TKIT.renderer.render( TKIT.scene, TKIT.camera );
+  }
+
+  TKIT.render();
+
+  window.addEventListener( 'resize', function() {
+    TKIT.camera.aspect = window.innerWidth / window.innerHeight;
+    TKIT.camera.updateProjectionMatrix();
+    TKIT.renderer.setSize( window.innerWidth, window.innerHeight );
+  });
 }

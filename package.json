@@ -23,7 +23,11 @@
   },
   "homepage": "https://github.com/austingray/threex-toolkit#readme",
   "dependencies": {
-    "concat-with-sourcemaps": "^1.0.4",
-    "uglify-js": "^2.7.5"
+    "concat-with-sourcemaps": "^1.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^3.18.0",
+    "eslint-config-google": "^0.7.1",
+    "uglify-js": "github:mishoo/UglifyJS2#harmony"
   }
 }

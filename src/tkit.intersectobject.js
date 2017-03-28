@@ -2,7 +2,7 @@
  * IntersectObject extension
  * adapted from: https://threejs.org/docs/api/core/Raycaster.html
  */
-TKIT = TKIT || {};
+var TKIT = TKIT || {};
 TKIT.IntersectObject = {};
 TKIT.IntersectObject.raycaster = new THREE.Raycaster();
 TKIT.IntersectObject.mouse = new THREE.Vector2();

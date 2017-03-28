@@ -39,13 +39,13 @@ TKIT.ContextMenu.createMenu = function() {
 TKIT.ContextMenu.createItem = function(item, offset) {
 
   // get our current click event
-  var event = TKIT.ContextMenu.event;
+  // var event = TKIT.ContextMenu.event;
 
   // get our item label and action
   var labelText = item.labelText;
   var action = item.action;
   var itemHeight = 64;
-  var itemWidth = 256;
+  // var itemWidth = 256;
 
   // create canvas
   var el = document.createElement('canvas');
