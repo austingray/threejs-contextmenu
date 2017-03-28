@@ -2,6 +2,10 @@ var TKIT = TKIT || {};
 TKIT.scenes = {};
 
 TKIT.scenes.generate = function(type) {
+  if (typeof type === 'undefined') {
+    var type = 'basic';
+  }
+
   const scene = TKIT.scenes.types[type];
 
   if (typeof scene === 'function') {
@@ -33,4 +37,8 @@ TKIT.scenes.types.basic = function() {
     TKIT.camera.updateProjectionMatrix();
     TKIT.renderer.setSize( window.innerWidth, window.innerHeight );
   });
+}
+
+TKIT.scenes.types.forest = function() {
+
 }

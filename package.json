@@ -7,7 +7,7 @@
     "example": "examples"
   },
   "scripts": {
-    "build": "build/build.js"
+    "build": "babel src --out-file dist/threex.toolkit.js | babili src --out-file dist/threex.toolkit.min.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "concat-with-sourcemaps": "^1.0.4"
   },
   "devDependencies": {
+    "babel-preset-env": "^1.2.2",
     "eslint": "^3.18.0",
     "eslint-config-google": "^0.7.1",
     "uglify-js": "github:mishoo/UglifyJS2#harmony"
