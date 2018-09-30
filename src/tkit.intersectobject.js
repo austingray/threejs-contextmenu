@@ -2,22 +2,27 @@
  * IntersectObject extension
  * adapted from: https://threejs.org/docs/api/core/Raycaster.html
  */
-var TKIT = TKIT || {};
-TKIT.IntersectObject = {};
-TKIT.IntersectObject.raycaster = new THREE.Raycaster();
-TKIT.IntersectObject.mouse = new THREE.Vector2();
 
-TKIT.IntersectObject.intersects = (event, scene, camera) => {
-  // calculate mouse position in normalized device coordinates
-  // (-1 to +1) for both components
-  TKIT.IntersectObject.mouse.x = ((event.clientX / window.innerWidth) * 2) - 1;
-  TKIT.IntersectObject.mouse.y = -((event.clientY / window.innerHeight) * 2) + 1;
+function IntersectObject() {
+  this.raycaster = new THREE.Raycaster();
+  this.mouse = new THREE.Vector2();
+}
 
-  // update the picking ray with the camera and mouse position
-  TKIT.IntersectObject.raycaster.setFromCamera(TKIT.IntersectObject.mouse, camera);
+Object.assign(IntersectObject, {
+  intersects(event, scene, camera) {
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
+    this.mouse.x = ((event.clientX / window.innerWidth) * 2) - 1;
+    this.mouse.y = -((event.clientY / window.innerHeight) * 2) + 1;
 
-  // calculate objects intersecting the picking ray
-  const intersects = TKIT.IntersectObject.raycaster.intersectObjects(scene.children);
+    // update the picking ray with the camera and mouse position
+    this.raycaster.setFromCamera(this.mouse, camera);
 
-  return intersects;
-};
+    // calculate objects intersecting the picking ray
+    const intersects = this.raycaster.intersectObjects(scene.children);
+
+    return intersects;
+  },
+});
+
+export { IntersectObject };

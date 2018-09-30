@@ -1,5 +1,6 @@
-var TKIT = TKIT || {};
-TKIT.init = (scene, camera) => {
-  TKIT.scene = scene;
-  TKIT.camera = camera;
-};
+function init(scene, camera) {
+  this.scene = scene;
+  this.camera = camera;
+}
+
+export { init };

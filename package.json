@@ -7,7 +7,7 @@
     "example": "examples"
   },
   "scripts": {
-    "build": "babel src --out-file dist/threex.toolkit.js | babili src --out-file dist/threex.toolkit.min.js"
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -22,15 +22,15 @@
     "url": "https://github.com/austingray/threex-toolkit/issues"
   },
   "homepage": "https://github.com/austingray/threex-toolkit#readme",
-  "dependencies": {
-    "concat-with-sourcemaps": "^1.0.4"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "babel-preset-env": "^1.2.2",
+    "concat-with-sourcemaps": "^1.1.0",
+    "concurrently": "^4.0.1",
     "eslint": "^3.18.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
-    "eslint-plugin-react": "^6.10.3"
+    "eslint-plugin-react": "^6.10.3",
+    "rollup": "^0.66.2"
   }
 }
