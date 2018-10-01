@@ -8,7 +8,7 @@ function IntersectObject() {
   this.mouse = new THREE.Vector2();
 }
 
-Object.assign(IntersectObject, {
+Object.assign(IntersectObject.prototype, {
   intersects(event, scene, camera) {
     // calculate mouse position in normalized device coordinates
     // (-1 to +1) for both components
