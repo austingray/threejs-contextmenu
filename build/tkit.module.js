@@ -1,3 +1,77 @@
+function Scenes() {}
+
+Object.assign(Scenes.prototype, {
+  types: {
+    basic() {
+      TKIT.scene = new THREE.Scene();
+      TKIT.camera = new THREE.PerspectiveCamera(
+        75, window.innerWidth / window.innerHeight, 0.1, 10000);
+      TKIT.camera.position.z = 600;
+      TKIT.light = new THREE.PointLight(0xffffff, 1, 0);
+      TKIT.light.position.set(0, 0, 1000);
+      TKIT.scene.add(TKIT.light);
+      TKIT.renderer = new THREE.WebGLRenderer({ antialias: true });
+      TKIT.renderer.setClearColor(0xf0f0f0);
+      TKIT.renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(TKIT.renderer.domElement);
+      TKIT.render = () => {
+        requestAnimationFrame(TKIT.render);
+        TKIT.renderer.render(TKIT.scene, TKIT.camera);
+      };
+
+      TKIT.render();
+
+      window.addEventListener('resize', () => {
+        TKIT.camera.aspect = window.innerWidth / window.innerHeight;
+        TKIT.camera.updateProjectionMatrix();
+        TKIT.renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    },
+  },
+});
+
+Object.assign(Scenes.prototype, {
+  generate(_type) {
+    let type = _type;
+    if (typeof _type === 'undefined') {
+      type = 'basic';
+    }
+
+    const scene = new TKIT.Scenes().types[type]();
+
+    if (typeof scene === 'function') {
+      scene();
+    }
+  },
+});
+
+/*
+ * IntersectObject extension
+ * adapted from: https://threejs.org/docs/api/core/Raycaster.html
+ */
+
+function IntersectObject() {
+  this.raycaster = new THREE.Raycaster();
+  this.mouse = new THREE.Vector2();
+}
+
+Object.assign(IntersectObject.prototype, {
+  intersects(event, scene, camera) {
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
+    this.mouse.x = ((event.clientX / window.innerWidth) * 2) - 1;
+    this.mouse.y = -((event.clientY / window.innerHeight) * 2) + 1;
+
+    // update the picking ray with the camera and mouse position
+    this.raycaster.setFromCamera(this.mouse, camera);
+
+    // calculate objects intersecting the picking ray
+    const intersects = this.raycaster.intersectObjects(scene.children);
+
+    return intersects;
+  },
+});
+
 function ContextMenu() {
   this.active = false;
 
@@ -135,4 +209,9 @@ Object.assign(ContextMenu.prototype, {
   },
 });
 
-export { ContextMenu };
+function init(scene, camera) {
+  this.scene = scene;
+  this.camera = camera;
+}
+
+export { Scenes, IntersectObject, ContextMenu, init };

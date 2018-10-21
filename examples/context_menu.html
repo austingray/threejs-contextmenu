@@ -9,11 +9,11 @@
 
   <body>
 
-    <script src="./lib/three.min.js"></script>
-    <script src="./dist/threex.toolkit.js"></script>
+    <script src="../lib/three.min.js"></script>
+    <script src="../build/tkit.js"></script>
     <script>
 
-      TKIT.scenes.generate();
+      var scene = new TKIT.Scenes().generate();
 
       /*
        * Context Menu Example
@@ -39,14 +39,15 @@
         { labelText: "Delete This Item", action: "deleteItem" }
       ];
 
-      TKIT.ContextMenu.create( items, actions, window.innerWidth / 2, 150 );
+      var contextMenu = new TKIT.ContextMenu().create( items, actions, window.innerWidth / 2, 150 );
 
       window.addEventListener( 'contextmenu', function(e) {
         e.preventDefault();
-        TKIT.ContextMenu.create( items, actions, e.clientX, e.clientY );
+        contextMenu.destroy();
+        contextMenu = new TKIT.ContextMenu().create( items, actions, e.clientX, e.clientY );
       });
       window.addEventListener( 'click', function(e) {
-        TKIT.ContextMenu.destroy();
+        contextMenu.destroy();
       });
 
 
