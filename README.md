@@ -5,6 +5,6 @@ Just playing around with Three. After checking out its source code I started con
 ### Build
 
 ```
-npm run build
+npm install
 npm run build
 ```
