@@ -1,15 +1,11 @@
-function Scenes() {
-  this.types = {};
+function Scenes() {}
 
-  Object.assign(this.types, {
+Object.assign(Scenes.prototype, {
+  types: {
     basic() {
       TKIT.scene = new THREE.Scene();
       TKIT.camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        10000,
-      );
+        75, window.innerWidth / window.innerHeight, 0.1, 10000);
       TKIT.camera.position.z = 600;
       TKIT.light = new THREE.PointLight(0xffffff, 1, 0);
       TKIT.light.position.set(0, 0, 1000);
@@ -31,8 +27,8 @@ function Scenes() {
         TKIT.renderer.setSize(window.innerWidth, window.innerHeight);
       });
     },
-  });
-}
+  },
+});
 
 Object.assign(Scenes.prototype, {
   generate(_type) {
@@ -41,7 +37,7 @@ Object.assign(Scenes.prototype, {
       type = 'basic';
     }
 
-    const scene = TKIT.Scenes.types[type];
+    const scene = new TKIT.Scenes().types[type]();
 
     if (typeof scene === 'function') {
       scene();
@@ -81,7 +77,7 @@ function ContextMenu() {
 
   this.Events = {};
   this.Events.mousemove = (event) => {
-    const intersects = TKIT.IntersectObject.intersects(event, TKIT.scene, TKIT.camera);
+    const intersects = new TKIT.IntersectObject().intersects(event, TKIT.scene, TKIT.camera);
     for (let i = 0; i < this.objects.length; i += 1) {
       this.objects[i].material.color.setHex(0xCDE0FE);
     }
@@ -90,7 +86,7 @@ function ContextMenu() {
     }
   };
   this.Events.click = (event) => {
-    const intersects = TKIT.IntersectObject.intersects(event, TKIT.scene, TKIT.camera);
+    const intersects = new TKIT.IntersectObject().intersects(event, TKIT.scene, TKIT.camera);
     if (intersects.length > 0) {
       this.actions[intersects[0].object.contextmenuaction]();
     }
@@ -118,10 +114,12 @@ Object.assign(ContextMenu.prototype, {
     document.addEventListener('mousemove', this.Events.mousemove, false);
     document.addEventListener('click', this.Events.click, false);
 
-    this.createMenu();
+    this.createMenu(items);
+
+    return this;
   },
   createMenu() {
-    for (let i = 0; i < TKIT.ContextMenu.items.length; i += 1) {
+    for (let i = 0; i < this.items.length; i += 1) {
       ((iter) => {
         const item = this.items[iter];
         setTimeout(() => {

@@ -1,10 +1,11 @@
-function Scenes() {
-  this.types = {};
+function Scenes() {}
 
-  Object.assign(this.types, {
+Object.assign(Scenes.prototype, {
+  types: {
     basic() {
       TKIT.scene = new THREE.Scene();
-      TKIT.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+      TKIT.camera = new THREE.PerspectiveCamera(
+        75, window.innerWidth / window.innerHeight, 0.1, 10000);
       TKIT.camera.position.z = 600;
       TKIT.light = new THREE.PointLight(0xffffff, 1, 0);
       TKIT.light.position.set(0, 0, 1000);
@@ -26,8 +27,8 @@ function Scenes() {
         TKIT.renderer.setSize(window.innerWidth, window.innerHeight);
       });
     },
-  });
-}
+  },
+});
 
 Object.assign(Scenes.prototype, {
   generate(_type) {
@@ -36,7 +37,7 @@ Object.assign(Scenes.prototype, {
       type = 'basic';
     }
 
-    const scene = TKIT.Scenes.types[type];
+    const scene = new TKIT.Scenes().types[type]();
 
     if (typeof scene === 'function') {
       scene();
